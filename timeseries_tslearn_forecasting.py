@@ -39,31 +39,33 @@ def fit_model(endog_data, exog_data=None, model_type=None):
     The Simple Exponential Smoothing (SES) method models the next time step as an exponentially weighted linear function of observations at prior time steps. 
     Suitable for univariate time series without trend and seasonal components.
     """
-    from statsmodels.tsa.arima_model import ARIMA
 
     p, d, q = 0, 0, 0
+    if model_type in ["AR", "MA", "ARMA", "ARIMA"]:
+        from statsmodels.tsa.arima_model import ARIMA
 
-    if model_type == "AR":
-        p = 1
-        model = ARIMA(endog_data, order=(p, d, q))
-        model_fit = model.fit(disp=False)
+        if model_type == "AR":
+            p = 1
+            model = ARIMA(endog_data, order=(p, d, q))
+            model_fit = model.fit(disp=False)
 
-    if model_type == "MA":
-        q = 1
-        model = ARIMA(endog_data, order=(p, d, q))
-        model_fit = model.fit(disp=False)
+        if model_type == "MA":
+            q = 1
+            model = ARIMA(endog_data, order=(p, d, q))
+            model_fit = model.fit(disp=False)
 
-    if model_type == "ARMA":
-        p, q = 1, 1
-        model = ARIMA(endog_data, order=(p, d, q))
-        model_fit = model.fit(disp=False)
+        if model_type == "ARMA":
+            p, q = 1, 1
+            model = ARIMA(endog_data, order=(p, d, q))
+            model_fit = model.fit(disp=False)
 
-    if model_type == "ARIMA":
-        p, d, q = 1, 1, 1
-        model = ARIMA(endog_data, order=(p, d, q))
-        model_fit = model.fit(disp=False)
+        if model_type == "ARIMA":
+            p, d, q = 1, 1, 1
+            model = ARIMA(endog_data, order=(p, d, q))
+            model_fit = model.fit(disp=False)
 
-    if model_type == "SARIMA":
+
+    elif model_type == "SARIMA":
         p, d, q, P, D, Q = 1, 1, 1, 1, 1, 1
         m = 3  # for a quarterly seasonal period
         from statsmodels.tsa.statespace.sarimax import SARIMAX
@@ -77,12 +79,14 @@ def fit_model(endog_data, exog_data=None, model_type=None):
         )
         model_fit = model.fit(disp=False)
 
-    if model_type in ["VAR", "VMA", "VARMA", "VARMAX"]:
+
+    elif model_type in ["VAR", "VMA", "VARMA", "VARMAX"]:
         """ note that this is a multivariate time series so your data is a 2- or more-dimensional vector """
         from statsmodels.tsa.statespace.varmax import VARMAX
 
         p = 1
         q = 1
+
         if model == "VARMAX":
             model = VARMAX(endog_data, exog=exog_data, order=(p, q))
         else:
@@ -91,12 +95,14 @@ def fit_model(endog_data, exog_data=None, model_type=None):
         model_fit = model.fit(disp=False)
         yhat = model_fit.forecast()
 
-    if model_type == "SES":
+
+    elif model_type == "SES":
         from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 
         model = SimpleExpSmoothing(endog_data)
         model_fit = model.fit()
         yhat = model_fit.predict(len(endog_data), len(endog_data))
+
 
     if model_type not in ["VAR", "VMA", "VARMA", "VARMAX", "SES"]:
         yhat = model_fit.predict(len(endog_data), len(endog_data), typ="levels")
