@@ -52,12 +52,3 @@ def agg_window_statistics(dataframe, width=0, column="temperature", win_type=Non
         agg_stat_df.columns = ["mean", "min", "max", "t"]
     return agg_stat_df
 
-
-def main():
-    df = shift_and_concat(4, "temperature")
-    print(df.head(20))
-    print("\nProgram Ran Successfully.")
-
-
-if __name__ == "__main__":
-    main()
